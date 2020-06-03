@@ -19,7 +19,13 @@ public:
     ~Array();
 
     //this operator returns or sets an arrays element at given position which is the parameter for this operator
-    T& operator[] (size_t);
+    //this operator throws out_of_range exception if the argument is equal or greater than the size of the array
+    T& operator[](size_t);
+
+    //this operator returns an arrays element at given position which is the parameter for this operator
+    //this operator works on const objects
+    //this operator throws out_of_range exception if the argument is equal or greater than the size of the array    
+    const T& operator[](size_t) const;
 
     //this method returns the size of the array
     size_t getSize() const;
@@ -93,6 +99,15 @@ T& Array<T>::operator[](size_t index)
         throw std::out_of_range("");
 
     return pointer[index];
+}
+
+template<typename T>
+const T& Array<T>::operator[](size_t index) const
+{
+    if(index >= size)
+        throw std::out_of_range("");
+
+    return pointer[index];    
 }
 
 template<typename T>
