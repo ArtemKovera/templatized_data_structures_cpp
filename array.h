@@ -17,6 +17,9 @@ public:
     //and the values of the array elements equal to the second argument
     Array(size_t, T);
 
+    //initializer-list constructor taking variable number of arguments 
+    Array(std::initializer_list<T>);
+
     //move constructor
     Array(Array&&) noexcept;
 
@@ -80,6 +83,17 @@ Array<T>::Array(size_t s, T value)
     
     for(size_t i = 0; i < s; i++)
         pointer[i] = value;    
+}
+
+template<typename T>
+Array<T>::Array(std::initializer_list<T> args) : Array(args.size())
+{
+    size_t i = 0;
+    for (auto el : args)
+    {
+        pointer[i] = el;
+        i++;
+    }
 }
 
 template<typename T>
