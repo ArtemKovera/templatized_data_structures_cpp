@@ -1,4 +1,5 @@
 #include<exception>
+#include<initializer_list>
 
 template<typename T>
 class Array
@@ -15,6 +16,12 @@ public:
     //this constructor creates an array whose size equals the first argument of the constructor
     //and the values of the array elements equal to the second argument
     Array(size_t, T);
+
+    //move constructor
+    Array(Array&&) noexcept;
+
+    //move assignment operator
+    Array& operator=(Array&&) noexcept;
 
     ~Array();
 
@@ -46,7 +53,9 @@ private:
     static const size_t defaultSize = 100;
 
     //helper method for freeing memory
-    void clean();
+    void clean() noexcept;
+
+    void moveFrom(Array&) noexcept;
 };
 
 template<typename T>
@@ -70,8 +79,25 @@ Array<T>::Array(size_t s, T value)
     pointer = new T[s];
     
     for(size_t i = 0; i < s; i++)
-        pointer[i] = value;
-    
+        pointer[i] = value;    
+}
+
+template<typename T>
+Array<T>::Array(Array&& src) noexcept
+{
+    moveFrom(src);
+}
+
+template<typename T>
+Array<T>& Array<T>::operator=(Array&& src) noexcept
+{
+    if(this == &src)
+        return *this;
+
+    clean();
+    moveFrom(src);
+
+    return *this;
 }
 
 template<typename T>
@@ -111,10 +137,20 @@ const T& Array<T>::operator[](size_t index) const
 }
 
 template<typename T>
-void Array<T>::clean()
+void Array<T>::clean() noexcept
 {
     delete [] pointer;
     pointer = nullptr;
+}
+
+template<typename T>
+void Array<T>::moveFrom(Array& src) noexcept
+{
+    pointer = src.pointer;
+    size = src.size;
+
+    src.pointer = nullptr;
+    src.size = 0;
 }
 
 
