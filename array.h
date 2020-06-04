@@ -20,6 +20,10 @@ public:
     //initializer-list constructor taking variable number of arguments 
     Array(std::initializer_list<T>);
 
+    Array(const Array&) = delete;
+
+    Array& operator=(const Array&) = delete;
+
     //move constructor
     Array(Array&&) noexcept;
 
@@ -95,6 +99,7 @@ Array<T>::Array(std::initializer_list<T> args) : Array(args.size())
         i++;
     }
 }
+
 
 template<typename T>
 Array<T>::Array(Array&& src) noexcept
