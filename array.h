@@ -6,6 +6,7 @@
 
 #include<exception>
 #include<initializer_list>
+#include<utility>
 
 template<typename T>
 class Array
@@ -29,7 +30,8 @@ public:
     //copy constructor
     Array(const Array&);
 
-    Array& operator=(const Array&) = delete;
+    //copy assignment operator
+    Array& operator=(const Array&);
 
     //move constructor
     Array(Array&&) noexcept;
@@ -69,7 +71,11 @@ private:
     //helper method for freeing memory
     void clean() noexcept;
 
+    //helper method used in move constructor and move assignment operator
     void moveFrom(Array&) noexcept;
+
+    //helper method used in copy assignment operator
+    void swap(Array&, Array&) noexcept;
 };
 
 template<typename T>
@@ -115,6 +121,17 @@ Array<T>::Array(const Array& src)
 
     for(size_t i = 0; i<size; i++)
         pointer[i] = src.pointer[i];
+}
+
+template<typename T>
+Array<T>& Array<T>::operator=(const Array& src)
+{
+    if (this == &src) 
+        return *this;
+    
+    Array<T> tmp (src);
+    swap(*this, tmp);
+    return *this;  
 }
 
 template<typename T>
@@ -186,6 +203,14 @@ void Array<T>::moveFrom(Array& src) noexcept
 
     src.pointer = nullptr;
     src.size = 0;
+}
+
+template<typename T>
+void Array<T>::swap(Array& first, Array& second) noexcept
+{
+    using std::swap;
+    swap(first.size, second.size);
+    swap(first.pointer, second.pointer);
 }
 
 
