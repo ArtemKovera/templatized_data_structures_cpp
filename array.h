@@ -26,7 +26,8 @@ public:
     //initializer-list constructor taking variable number of arguments 
     Array(std::initializer_list<T>);
 
-    Array(const Array&) = delete;
+    //copy constructor
+    Array(const Array&);
 
     Array& operator=(const Array&) = delete;
 
@@ -106,6 +107,15 @@ Array<T>::Array(std::initializer_list<T> args) : Array(args.size())
     }
 }
 
+template<typename T>
+Array<T>::Array(const Array& src)
+{
+    size = src.size;
+    pointer = new T[size];
+
+    for(size_t i = 0; i<size; i++)
+        pointer[i] = src.pointer[i];
+}
 
 template<typename T>
 Array<T>::Array(Array&& src) noexcept
