@@ -1,3 +1,9 @@
+/*
+  
+  !!!This templatized class for array data structure works in a different way than the array in STL!!!
+
+*/
+
 #include<exception>
 #include<initializer_list>
 
@@ -11,7 +17,7 @@ public:
 
     //this constructor creates an array whose size equals the argument of the constructor 
     //elements are zero initialized
-    Array(size_t);
+    explicit Array(size_t);
 
     //this constructor creates an array whose size equals the first argument of the constructor
     //and the values of the array elements equal to the second argument
