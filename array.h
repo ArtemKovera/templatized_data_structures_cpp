@@ -3,6 +3,8 @@
   !!!This templatized class for array data structure works in a different way than the array in STL!!!
 
 */
+#ifndef _ARRAY_H_
+#define _ARRAY_H_
 
 #include<exception>
 #include<initializer_list>
@@ -213,4 +215,4 @@ void Array<T>::swap(Array& first, Array& second) noexcept
     swap(first.pointer, second.pointer);
 }
 
-
+#endif
