@@ -34,9 +34,9 @@ public:
 
     Vector& operator=(const Vector&) = delete;
 
-    Vector(Vector&&) = delete;
+    Vector(Vector&&);
 
-    Vector& operator=(Vector&&) = delete;
+    Vector& operator=(Vector&&);
     
     //inserts a new element at the end of a vector
     void pushBack(T);
@@ -92,7 +92,10 @@ private:
     void resize(size_t);
 
     //helper method for memory allocation
-    void allocateMemory(size_t);        
+    void allocateMemory(size_t);   
+
+    //helper method used in move constructor and assignment operator
+    void moveFrom(Vector&) noexcept;     
 };
 
 template<typename T>
@@ -124,6 +127,23 @@ Vector<T>::Vector(std::initializer_list<T> args): size{args.size()}
         pointer[i] = el;
         i++;
     }   
+}
+
+template<typename T>
+Vector<T>::Vector(Vector&& src) noexcept
+{
+    moveFrom(src);
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(Vector&& src) noexcept
+{
+    if(this == &src)
+        return *this;
+
+    clean(pointer);
+    moveFrom(src);
+    return *this;
 }
 
 template<typename T>
@@ -253,6 +273,18 @@ const T& Vector<T>::operator[](size_t index) const
         throw std::out_of_range("Invalid index"); 
 
     return pointer[index];
+}
+
+template<typename T>
+void Vector<T>::moveFrom(Vector& src) noexcept
+{
+    size = src.size;
+    numberOfAllocatedMembers = src.numberOfAllocatedMembers;
+    pointer = src.pointer;
+
+    src.size = 0;
+    src.numberOfAllocatedMembers = 0;
+    src.pointer = nullptr;
 }
 
 #endif
