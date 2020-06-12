@@ -30,13 +30,17 @@ public:
 
     virtual ~Vector();
 
-    Vector(const Vector&) = delete;
+    //copy constructor
+    Vector(const Vector&);
+    
+    //exception-safe copy assignment operator
+    Vector& operator=(const Vector&);
 
-    Vector& operator=(const Vector&) = delete;
+    //move constructor
+    Vector(Vector&&) noexcept;
 
-    Vector(Vector&&);
-
-    Vector& operator=(Vector&&);
+    //move assignment operator
+    Vector& operator=(Vector&&) noexcept;
     
     //inserts a new element at the end of a vector
     void pushBack(T);
@@ -95,7 +99,10 @@ private:
     void allocateMemory(size_t);   
 
     //helper method used in move constructor and assignment operator
-    void moveFrom(Vector&) noexcept;     
+    void moveFrom(Vector&) noexcept;  
+
+    //helper method used in copy assignment operator
+    void swap (Vector&, Vector&) noexcept;   
 };
 
 template<typename T>
@@ -127,6 +134,28 @@ Vector<T>::Vector(std::initializer_list<T> args): size{args.size()}
         pointer[i] = el;
         i++;
     }   
+}
+
+template<typename T>
+Vector<T>::Vector(const Vector& src)
+{
+    size = src.size;
+    numberOfAllocatedMembers = src.numberOfAllocatedMembers;
+
+    pointer = new T[size];
+    for(size_t i = 0; i<size; i++)
+        pointer[i] = src.pointer[i];
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(const Vector& src)
+{
+    if(this == &src)
+        return *this;
+
+    Vector<T> tmp(src);
+    swap(*this, tmp);
+    return *this;
 }
 
 template<typename T>
@@ -285,6 +314,15 @@ void Vector<T>::moveFrom(Vector& src) noexcept
     src.size = 0;
     src.numberOfAllocatedMembers = 0;
     src.pointer = nullptr;
+}
+
+template<typename T>
+void Vector<T>::swap(Vector& first, Vector& second) noexcept
+{
+    using std::swap;
+    swap(first.size, second.size);
+    swap(first.numberOfAllocatedMembers, second.numberOfAllocatedMembers);
+    swap(first.pointer, second.pointer);
 }
 
 #endif
